@@ -25,8 +25,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.marsphotos.MarsPhotosApplication
-import data.MarsPhotosRepository
-import data.NetworkMarsPhotosRepository
+import com.example.marsphotos.data.MarsPhotosRepository
+import com.example.marsphotos.data.NetworkMarsPhotosRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -59,7 +59,7 @@ class MarsViewModel(private val marsPhotosRepository: MarsPhotosRepository) : Vi
            marsUiState = try {
                 val listResult = marsPhotosRepository.getMarsPhotos()
                 MarsUIState.Success(
-                    "Success: ${listResult.size} Mars photo retrived")
+                    "Success: ${listResult.size} Mars photos retrieved")
             } catch (e: IOException) {
                 MarsUIState.Error
             } catch (e: HttpException) {

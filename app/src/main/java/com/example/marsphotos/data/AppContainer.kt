@@ -1,4 +1,4 @@
-package data
+package com.example.marsphotos.data
 
 import com.example.marsphotos.network.MarsApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
