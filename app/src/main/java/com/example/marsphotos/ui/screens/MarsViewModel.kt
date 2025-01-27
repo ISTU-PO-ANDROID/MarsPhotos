@@ -15,6 +15,7 @@
  */
 package com.example.marsphotos.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,20 +27,20 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.marsphotos.MarsPhotosApplication
 import com.example.marsphotos.data.MarsPhotosRepository
-import com.example.marsphotos.data.NetworkMarsPhotosRepository
+import com.example.marsphotos.model.MarsPhoto
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed interface MarsUIState {
-    data class Success(val photos: String) : MarsUIState
-    object Error : MarsUIState
-    object Loading : MarsUIState
+sealed interface MarsUiState {
+    data class Success(val photos: List<MarsPhoto>) : MarsUiState
+    object Error : MarsUiState
+    object Loading : MarsUiState
 }
 
 class MarsViewModel(private val marsPhotosRepository: MarsPhotosRepository) : ViewModel() {
     /** The mutable State that stores the status of the most recent request */
-    var marsUiState: MarsUIState by mutableStateOf(MarsUIState.Loading)
+    var marsUiState: MarsUiState by mutableStateOf(MarsUiState.Loading)
         private set
 
     /**
@@ -55,21 +56,21 @@ class MarsViewModel(private val marsPhotosRepository: MarsPhotosRepository) : Vi
      */
     fun getMarsPhotos() {
         viewModelScope.launch {
-            marsUiState = MarsUIState.Loading
-           marsUiState = try {
-                val listResult = marsPhotosRepository.getMarsPhotos()
-                MarsUIState.Success(
-                    "Success: ${listResult.size} Mars photos retrieved")
+            marsUiState = MarsUiState.Loading
+            marsUiState = try {
+//                val result = marsPhotosRepository.getMarsPhotos()[0]
+//                Log.d("MarsPhotos", result.imgSrc)
+                MarsUiState.Success(marsPhotosRepository.getMarsPhotos())
             } catch (e: IOException) {
-                MarsUIState.Error
+                MarsUiState.Error
             } catch (e: HttpException) {
-                MarsUIState.Error
+                MarsUiState.Error
             }
         }
     }
 
     companion object {
-        val Factory : ViewModelProvider.Factory = viewModelFactory {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as MarsPhotosApplication)
                 val marsPhotosRepository = application.container.marsPhotosRepository

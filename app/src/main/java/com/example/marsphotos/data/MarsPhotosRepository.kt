@@ -10,6 +10,13 @@ interface MarsPhotosRepository {
 class NetworkMarsPhotosRepository(
     private val marsApiService: MarsApiService
 ) : MarsPhotosRepository {
-    override suspend fun getMarsPhotos(): List<MarsPhoto> =
-        marsApiService.getPhotos()
+    override suspend fun getMarsPhotos(): List<MarsPhoto> {
+        val listPhotos = marsApiService.getPhotos()
+        val updatedList = listPhotos.map { photo ->
+            MarsPhoto(photo.id, photo.imgSrc.replace(".jpl", ""))
+        }
+        return updatedList
+
+//        return marsApiService.getPhotos()
+    }
 }
